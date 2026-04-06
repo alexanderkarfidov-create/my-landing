@@ -1,0 +1,13 @@
+# Research & planning docs (not needed in production)
+research.md
+brief.md
+LANDING_PAGE_STRUCTURE.md
+TECH-STACK-REPORT.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+*.swp
