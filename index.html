@@ -1343,7 +1343,7 @@
     const x2 = x*cosY - z*sinY, z2 = x*sinY + z*cosY;
     const cosX = Math.cos(rx), sinX = Math.sin(rx);
     const y3 = y*cosX - z2*sinX, z3 = y*sinX + z2*cosX;
-    const fov = 5, d = fov/(fov+z3);
+    const fov = 6, d = fov/(fov+z3);
     return [cx+x2*d*scale, cy+y3*d*scale, z3];
   }
 
@@ -1384,7 +1384,7 @@
   // LOADER ANIMATION — draw edges then rotate
   // ============================================================
   const loaderCanvas = document.getElementById('loaderCanvas');
-  const lSize = 220;
+  const lSize = 260;
   setupCanvas(loaderCanvas, lSize);
   const lCtx = loaderCanvas.getContext('2d');
   lCtx.scale(Math.min(window.devicePixelRatio||1,2), Math.min(window.devicePixelRatio||1,2));
@@ -1404,8 +1404,8 @@
         let t = (el - es) / EDGE_DUR;
         if (t <= 0) return;
         t = Math.min(t, 1);
-        const pa = proj(dodVerts[a], lRY, lRX, lSize*0.36, lSize/2, lSize/2);
-        const pb = proj(dodVerts[b], lRY, lRX, lSize*0.36, lSize/2, lSize/2);
+        const pa = proj(dodVerts[a], lRY, lRX, lSize*0.21, lSize/2, lSize/2);
+        const pb = proj(dodVerts[b], lRY, lRX, lSize*0.21, lSize/2, lSize/2);
         const ex = pa[0] + (pb[0]-pa[0]) * t;
         const ey = pa[1] + (pb[1]-pa[1]) * t;
         lCtx.globalAlpha = 0.85;
@@ -1421,7 +1421,7 @@
       if (el >= DRAW_TOTAL) { lPhase = 'rotate'; lStart = ts; }
     } else {
       lRY = -0.25 + (ts - lStart) / 2800 * Math.PI * 2 * 0.35;
-      drawDod(lCtx, lRY, lRX, lSize*0.36, lSize/2, lSize/2, '#1c1917', 1.5, 0.9);
+      drawDod(lCtx, lRY, lRX, lSize*0.21, lSize/2, lSize/2, '#1c1917', 1.5, 0.9);
       if (ts - lStart > 900) {
         // Hide loader, start main animations
         document.getElementById('loader').classList.add('out');
@@ -1445,7 +1445,7 @@
     function frame() {
       ry += 0.006;
       ctx.clearRect(0, 0, size, size);
-      drawDod(ctx, ry, 0.28, size*0.38, size/2, size/2, '#1c1917', 1.3, 0.18);
+      drawDod(ctx, ry, 0.28, size*0.21, size/2, size/2, '#1c1917', 1.3, 0.18);
       requestAnimationFrame(frame);
     }
     frame();
@@ -1464,7 +1464,7 @@
       function frame() {
         ry += 0.008;
         ctx.clearRect(0, 0, s, s);
-        drawDod(ctx, ry, 0.3, s*0.36, s/2, s/2, '#1c1917', 1, 0.85);
+        drawDod(ctx, ry, 0.3, s*0.21, s/2, s/2, '#1c1917', 1, 0.85);
         requestAnimationFrame(frame);
       }
       frame();
