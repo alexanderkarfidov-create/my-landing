@@ -375,6 +375,8 @@
     #cases { padding: 100px 0; }
     .carousel-wrap { position: relative; }
     .carousel-container { position: relative; }
+
+    /* Right fade */
     .carousel-container::after {
       content: '';
       position: absolute;
@@ -383,15 +385,49 @@
       background: linear-gradient(to right, transparent, var(--bg) 75%);
       pointer-events: none;
       z-index: 2;
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
+    .carousel-container.at-end::after { opacity: 0; }
+
+    /* Left fade */
+    .carousel-container::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 160px;
+      background: linear-gradient(to left, transparent, var(--bg) 75%);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .carousel-container.has-left::before { opacity: 1; }
+
+    /* Right arrow */
     .c-next {
       position: absolute;
-      right: 16px;
-      top: 50%;
+      right: 16px; top: 50%;
       transform: translateY(-50%);
       z-index: 3;
       box-shadow: 0 4px 16px rgba(28,25,23,0.12);
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
+    .carousel-container.at-end .c-next { opacity: 0; pointer-events: none; }
+
+    /* Left arrow */
+    .c-prev {
+      position: absolute;
+      left: 16px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      box-shadow: 0 4px 16px rgba(28,25,23,0.12);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .carousel-container.has-left .c-prev { opacity: 1; pointer-events: all; }
     .carousel {
       display: flex; gap: 20px;
       overflow-x: auto; scroll-snap-type: x mandatory;
@@ -430,9 +466,6 @@
       color: var(--ink2); background: var(--bg2);
       border: 1px solid var(--border); border-radius: 100px;
       padding: 5px 12px; width: fit-content;
-    }
-    .carousel-nav {
-      display: flex; gap: 8px; margin-top: 24px;
     }
     .c-btn {
       width: 44px; height: 44px; border-radius: 50%;
@@ -943,10 +976,8 @@
           <span class="case-tag">n8n · PostgreSQL · Telegram</span>
         </div>
       </div>
+      <button class="c-btn c-prev" id="casesPrev">←</button>
       <button class="c-btn c-next" id="casesNext">→</button>
-      </div>
-      <div class="carousel-nav">
-        <button class="c-btn" id="casesPrev">←</button>
       </div>
     </div>
   </div>
@@ -1136,10 +1167,8 @@
           </div>
         </div>
       </div>
+      <button class="c-btn c-prev" id="revPrev">←</button>
       <button class="c-btn c-next" id="revNext">→</button>
-      </div>
-      <div class="carousel-nav">
-        <button class="c-btn" id="revPrev">←</button>
       </div>
     </div>
   </div>
@@ -1514,9 +1543,21 @@
   // ============================================================
   function setupCarousel(carouselId, prevId, nextId) {
     const el = document.getElementById(carouselId);
+    const container = el.closest('.carousel-container');
     const cardW = () => el.firstElementChild.offsetWidth + 20;
-    document.getElementById(prevId).addEventListener('click', () => { el.scrollBy({left: -cardW(), behavior:'smooth'}); });
-    document.getElementById(nextId).addEventListener('click', () => { el.scrollBy({left:  cardW(), behavior:'smooth'}); });
+
+    function updateEdges() {
+      const atStart = el.scrollLeft < 8;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+      container.classList.toggle('has-left', !atStart);
+      container.classList.toggle('at-end', atEnd);
+    }
+
+    el.addEventListener('scroll', updateEdges, { passive: true });
+    updateEdges();
+
+    document.getElementById(prevId).addEventListener('click', () => { el.scrollBy({ left: -cardW(), behavior: 'smooth' }); });
+    document.getElementById(nextId).addEventListener('click', () => { el.scrollBy({ left:  cardW(), behavior: 'smooth' }); });
   }
   setupCarousel('casesCarousel','casesPrev','casesNext');
   setupCarousel('revCarousel','revPrev','revNext');
