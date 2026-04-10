@@ -374,6 +374,24 @@
     ===================== */
     #cases { padding: 100px 0; }
     .carousel-wrap { position: relative; }
+    .carousel-container { position: relative; }
+    .carousel-container::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 160px;
+      background: linear-gradient(to right, transparent, var(--bg) 75%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .c-next {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      box-shadow: 0 4px 16px rgba(28,25,23,0.12);
+    }
     .carousel {
       display: flex; gap: 20px;
       overflow-x: auto; scroll-snap-type: x mandatory;
@@ -862,6 +880,7 @@
       <p class="sec-sub reveal d2">Реальные цифры из проектов. Имена по запросу — под NDA у большинства клиентов.</p>
     </div>
     <div class="carousel-wrap reveal">
+      <div class="carousel-container">
       <div class="carousel" id="casesCarousel">
         <div class="case-card">
           <div class="case-cat">ИИ-агент · Автосервис</div>
@@ -924,9 +943,10 @@
           <span class="case-tag">n8n · PostgreSQL · Telegram</span>
         </div>
       </div>
+      <button class="c-btn c-next" id="casesNext">→</button>
+      </div>
       <div class="carousel-nav">
         <button class="c-btn" id="casesPrev">←</button>
-        <button class="c-btn" id="casesNext">→</button>
       </div>
     </div>
   </div>
@@ -1069,6 +1089,7 @@
       </div>
     </div>
     <div class="carousel-wrap reveal">
+      <div class="carousel-container">
       <div class="carousel" id="revCarousel">
         <div class="rev-card">
           <div class="rev-stars">★★★★★</div>
@@ -1115,9 +1136,10 @@
           </div>
         </div>
       </div>
+      <button class="c-btn c-next" id="revNext">→</button>
+      </div>
       <div class="carousel-nav">
         <button class="c-btn" id="revPrev">←</button>
-        <button class="c-btn" id="revNext">→</button>
       </div>
     </div>
   </div>
