@@ -1453,7 +1453,8 @@
   const lSize = Math.min(220, window.innerWidth * 0.7);
   const lCtx = setupCanvas(loaderCanvas, lSize);
 
-  const DRAW_DUR = 750;
+  const EDGE_DELAY = 55, EDGE_DUR = 90;
+  const DRAW_TOTAL = dodEdges.length * EDGE_DELAY + EDGE_DUR;
   let lStart = null, lPhase = 'draw', lRY = -0.25, lRX = 0.28;
 
   function loaderFrame(ts) {
@@ -1462,27 +1463,28 @@
     lCtx.clearRect(0, 0, lSize, lSize);
 
     if (lPhase === 'draw') {
-      // все рёбра одновременно из вершин
-      const t = Math.min(el / DRAW_DUR, 1);
-      const eased = 1 - Math.pow(1 - t, 2); // ease-out
-      lCtx.strokeStyle = '#1c1917';
-      lCtx.lineWidth = 1.5;
-      lCtx.lineCap = 'round';
-      lCtx.globalAlpha = 0.85;
-      dodEdges.forEach(([a, b]) => {
+      dodEdges.forEach(([a, b], i) => {
+        const es = i * EDGE_DELAY;
+        let t = (el - es) / EDGE_DUR;
+        if (t <= 0) return;
+        t = Math.min(t, 1);
         const pa = proj(dodVerts[a], lRY, lRX, lSize*0.27, lSize/2, lSize/2);
         const pb = proj(dodVerts[b], lRY, lRX, lSize*0.27, lSize/2, lSize/2);
+        lCtx.globalAlpha = 0.85;
+        lCtx.strokeStyle = '#1c1917';
+        lCtx.lineWidth = 1.5;
+        lCtx.lineCap = 'round';
         lCtx.beginPath();
         lCtx.moveTo(pa[0], pa[1]);
-        lCtx.lineTo(pa[0] + (pb[0]-pa[0]) * eased, pa[1] + (pb[1]-pa[1]) * eased);
+        lCtx.lineTo(pa[0] + (pb[0]-pa[0]) * t, pa[1] + (pb[1]-pa[1]) * t);
         lCtx.stroke();
+        lCtx.globalAlpha = 1;
       });
-      lCtx.globalAlpha = 1;
-      if (t >= 1) { lPhase = 'rotate'; lStart = ts; }
+      if (el >= DRAW_TOTAL) { lPhase = 'rotate'; lStart = ts; }
     } else {
       lRY = -0.25 - (ts - lStart) / 2800 * Math.PI * 2 * 0.35;
       drawDod(lCtx, lRY, lRX, lSize*0.27, lSize/2, lSize/2, '#1c1917', 1.5, 0.9);
-      if (ts - lStart > 380) {
+      if (ts - lStart > 900) {
         document.getElementById('loader').classList.add('out');
         startHeroCanvas();
         startMiniCanvases();
