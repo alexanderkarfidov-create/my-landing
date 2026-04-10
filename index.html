@@ -1383,10 +1383,8 @@
   // LOADER ANIMATION — draw edges then rotate
   // ============================================================
   const loaderCanvas = document.getElementById('loaderCanvas');
-  const lSize = 260;
-  setupCanvas(loaderCanvas, lSize);
-  const lCtx = loaderCanvas.getContext('2d');
-  lCtx.scale(Math.min(window.devicePixelRatio||1,2), Math.min(window.devicePixelRatio||1,2));
+  const lSize = Math.min(220, window.innerWidth * 0.7);
+  const lCtx = setupCanvas(loaderCanvas, lSize);
 
   const EDGE_DELAY = 55, EDGE_DUR = 90;
   const DRAW_TOTAL = dodEdges.length * EDGE_DELAY + EDGE_DUR;
