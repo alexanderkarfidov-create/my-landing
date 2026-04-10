@@ -320,12 +320,27 @@
       .hero-stats { flex-wrap: wrap; }
       .h-stat { flex: 1 1 45%; }
       h1.hero-h1 { font-size: clamp(2.4rem, 8vw, 3.2rem); }
+
+      /* Section padding on mobile */
+      #services, #cases, #process, #about,
+      #pricing, #reviews, #faq, #contact { padding: 48px 0; }
+      .sec-top { margin-bottom: 36px; }
+
+      /* Carousel: cards fit screen with next-card peek visible */
+      .case-card { flex: 0 0 80vw; }
+      .rev-card  { flex: 0 0 80vw; }
+      /* Thin fades that don't eat the card */
+      .carousel-container::after,
+      .carousel-container::before { width: 40px; }
+      /* Arrows tight to the fade edge */
+      .c-next { right: 4px; top: 50%; }
+      .c-prev { left: 4px; top: 50%; }
     }
 
     /* =====================
        SERVICES
     ===================== */
-    #services { padding: 100px 0; }
+    #services { padding: 72px 0; }
     .svc-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -372,7 +387,7 @@
     /* =====================
        CASES CAROUSEL
     ===================== */
-    #cases { padding: 100px 0; }
+    #cases { padding: 72px 0; }
     .carousel-wrap { position: relative; }
     .carousel-container { position: relative; }
 
@@ -479,7 +494,7 @@
     /* =====================
        PROCESS
     ===================== */
-    #process { padding: 100px 0; background: var(--bg2); }
+    #process { padding: 72px 0; background: var(--bg2); }
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -510,7 +525,7 @@
     /* =====================
        ABOUT
     ===================== */
-    #about { padding: 100px 0; }
+    #about { padding: 72px 0; }
     .about-grid {
       display: grid;
       grid-template-columns: 420px 1fr;
@@ -560,7 +575,7 @@
     /* =====================
        PRICING
     ===================== */
-    #pricing { padding: 100px 0; background: var(--bg2); }
+    #pricing { padding: 72px 0; background: var(--bg2); }
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -610,7 +625,7 @@
     /* =====================
        REVIEWS CAROUSEL
     ===================== */
-    #reviews { padding: 100px 0; }
+    #reviews { padding: 72px 0; }
     .rev-card {
       flex: 0 0 360px;
       scroll-snap-align: start;
@@ -635,7 +650,7 @@
     /* =====================
        FAQ
     ===================== */
-    #faq { padding: 100px 0; background: var(--bg2); }
+    #faq { padding: 72px 0; background: var(--bg2); }
     .faq-list { display: flex; flex-direction: column; gap: 2px; max-width: 800px; }
     .faq-item {
       background: var(--white);
@@ -668,7 +683,7 @@
     /* =====================
        CONTACT
     ===================== */
-    #contact { padding: 100px 0; }
+    #contact { padding: 72px 0; }
     .contact-wrap {
       display: grid;
       grid-template-columns: 1fr 1fr;
