@@ -326,15 +326,22 @@
       #pricing, #reviews, #faq, #contact { padding: 48px 0; }
       .sec-top { margin-bottom: 36px; }
 
-      /* Carousel: cards fit screen with next-card peek visible */
-      .case-card { flex: 0 0 80vw; }
-      .rev-card  { flex: 0 0 80vw; }
-      /* Thin fades that don't eat the card */
+      /* Carousel option B: one card full width, arrows below */
+      .case-card { flex: 0 0 100%; }
+      .rev-card  { flex: 0 0 100%; }
       .carousel-container::after,
-      .carousel-container::before { width: 40px; }
-      /* Arrows tight to the fade edge */
-      .c-next { right: 4px; top: 50%; }
-      .c-prev { left: 4px; top: 50%; }
+      .carousel-container::before { display: none; }
+      .carousel-arrows {
+        display: flex; gap: 12px; justify-content: center;
+        padding-top: 16px;
+      }
+      .carousel-arrows .c-btn {
+        position: static;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: all !important;
+      }
+      .carousel-arrows .c-btn:active { transform: none !important; }
     }
 
     /* =====================
@@ -443,6 +450,9 @@
       transition: opacity 0.3s ease;
     }
     .carousel-container.has-left .c-prev { opacity: 1; pointer-events: all; }
+
+    /* Arrows wrapper — invisible on desktop, flex row on mobile */
+    .carousel-arrows { display: contents; }
     .carousel {
       display: flex; gap: 20px;
       overflow-x: auto; scroll-snap-type: x mandatory;
@@ -487,9 +497,12 @@
       background: var(--white); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; font-size: 1rem; color: var(--ink);
-      transition: background 0.2s, transform 0.2s;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .c-btn:hover { background: var(--bg2); transform: scale(1.05); }
+    .c-btn:hover { background: var(--bg2); border-color: rgba(28,25,23,0.22); }
+    .c-btn:active { background: var(--bg2); }
+    .c-next:active { transform: translateY(-50%); }
+    .c-prev:active { transform: translateY(-50%); }
 
     /* =====================
        PROCESS
@@ -991,8 +1004,10 @@
           <span class="case-tag">n8n · PostgreSQL · Telegram</span>
         </div>
       </div>
-      <button class="c-btn c-prev" id="casesPrev">←</button>
-      <button class="c-btn c-next" id="casesNext">→</button>
+      <div class="carousel-arrows">
+        <button class="c-btn c-prev" id="casesPrev">←</button>
+        <button class="c-btn c-next" id="casesNext">→</button>
+      </div>
       </div>
     </div>
   </div>
@@ -1182,8 +1197,10 @@
           </div>
         </div>
       </div>
-      <button class="c-btn c-prev" id="revPrev">←</button>
-      <button class="c-btn c-next" id="revNext">→</button>
+      <div class="carousel-arrows">
+        <button class="c-btn c-prev" id="revPrev">←</button>
+        <button class="c-btn c-next" id="revNext">→</button>
+      </div>
       </div>
     </div>
   </div>
@@ -1436,8 +1453,7 @@
   const lSize = Math.min(220, window.innerWidth * 0.7);
   const lCtx = setupCanvas(loaderCanvas, lSize);
 
-  const EDGE_DELAY = 55, EDGE_DUR = 90;
-  const DRAW_TOTAL = dodEdges.length * EDGE_DELAY + EDGE_DUR;
+  const DRAW_DUR = 750;
   let lStart = null, lPhase = 'draw', lRY = -0.25, lRX = 0.28;
 
   function loaderFrame(ts) {
@@ -1446,31 +1462,27 @@
     lCtx.clearRect(0, 0, lSize, lSize);
 
     if (lPhase === 'draw') {
-      dodEdges.forEach(([a,b], i) => {
-        const es = i * EDGE_DELAY, ee = es + EDGE_DUR;
-        let t = (el - es) / EDGE_DUR;
-        if (t <= 0) return;
-        t = Math.min(t, 1);
+      // все рёбра одновременно из вершин
+      const t = Math.min(el / DRAW_DUR, 1);
+      const eased = 1 - Math.pow(1 - t, 2); // ease-out
+      lCtx.strokeStyle = '#1c1917';
+      lCtx.lineWidth = 1.5;
+      lCtx.lineCap = 'round';
+      lCtx.globalAlpha = 0.85;
+      dodEdges.forEach(([a, b]) => {
         const pa = proj(dodVerts[a], lRY, lRX, lSize*0.27, lSize/2, lSize/2);
         const pb = proj(dodVerts[b], lRY, lRX, lSize*0.27, lSize/2, lSize/2);
-        const ex = pa[0] + (pb[0]-pa[0]) * t;
-        const ey = pa[1] + (pb[1]-pa[1]) * t;
-        lCtx.globalAlpha = 0.85;
-        lCtx.strokeStyle = '#1c1917';
-        lCtx.lineWidth = 1.5;
-        lCtx.lineCap = 'round';
         lCtx.beginPath();
         lCtx.moveTo(pa[0], pa[1]);
-        lCtx.lineTo(ex, ey);
+        lCtx.lineTo(pa[0] + (pb[0]-pa[0]) * eased, pa[1] + (pb[1]-pa[1]) * eased);
         lCtx.stroke();
-        lCtx.globalAlpha = 1;
       });
-      if (el >= DRAW_TOTAL) { lPhase = 'rotate'; lStart = ts; }
+      lCtx.globalAlpha = 1;
+      if (t >= 1) { lPhase = 'rotate'; lStart = ts; }
     } else {
       lRY = -0.25 - (ts - lStart) / 2800 * Math.PI * 2 * 0.35;
       drawDod(lCtx, lRY, lRX, lSize*0.27, lSize/2, lSize/2, '#1c1917', 1.5, 0.9);
-      if (ts - lStart > 900) {
-        // Hide loader, start main animations
+      if (ts - lStart > 380) {
         document.getElementById('loader').classList.add('out');
         startHeroCanvas();
         startMiniCanvases();
