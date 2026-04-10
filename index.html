@@ -75,20 +75,6 @@
       color: var(--ink3);
     }
 
-    /* CURSOR */
-    #cursor {
-      position: fixed;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--ink);
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s, opacity 0.2s;
-      mix-blend-mode: multiply;
-    }
-    #cursor.big { width: 50px; height: 50px; opacity: 0.15; }
-    @media (pointer: coarse) { #cursor { display: none; } }
 
     /* BOTTOM NAV */
     #nav {
@@ -746,8 +732,6 @@
   <div class="loader-label">Загрузка...</div>
 </div>
 
-<!-- CURSOR -->
-<div id="cursor"></div>
 
 <!-- BOTTOM NAV -->
 <nav id="nav">
@@ -1478,21 +1462,6 @@
 
   // ============================================================
   // CURSOR
-  // ============================================================
-  const cur = document.getElementById('cursor');
-  if (window.matchMedia('(pointer: fine)').matches) {
-    let cx2=0, cy2=0, tx2=0, ty2=0;
-    document.addEventListener('mousemove', e => { tx2=e.clientX; ty2=e.clientY; }, {passive:true});
-    document.querySelectorAll('a,button,.svc-card,.case-card,.rev-card,.p-card,.f-bopt').forEach(el => {
-      el.addEventListener('mouseenter', () => cur.classList.add('big'));
-      el.addEventListener('mouseleave', () => cur.classList.remove('big'));
-    });
-    (function loop() {
-      cx2 += (tx2-cx2)*0.1; cy2 += (ty2-cy2)*0.1;
-      cur.style.left = cx2+'px'; cur.style.top = cy2+'px';
-      requestAnimationFrame(loop);
-    })();
-  } else { cur.style.display='none'; }
 
   // ============================================================
   // NAV — hamburger
